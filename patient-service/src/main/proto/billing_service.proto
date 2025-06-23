@@ -1,0 +1,37 @@
+// Specifies the version of the Protocol Buffers language to use.
+// proto3 is the latest version and widely supported.
+syntax = "proto3";
+
+// This tells the Protobuf compiler to generate multiple Java files
+// instead of putting all classes in a single file.
+// Each message/service will get its own class.
+option java_multiple_files = true;
+
+// Sets the Java package name where the generated classes will be placed.
+// It's good practice to align this with your microservice's package structure.
+option java_package = "billing";
+
+// Define a gRPC service named "BillingService".
+// This is like a controller/interface that exposes remote methods.
+service BillingService {
+  // Declares an RPC (Remote Procedure Call) method named "CreateBillingAccount".
+  // It takes a BillingRequest message as input and returns a BillingResponse.
+  rpc CreateBillingAccount(BillingRequest) returns (BillingResponse);
+}
+
+// Defines the request message for creating a billing account.
+// Similar to a DTO or POJO in Spring Boot.
+message BillingRequest {
+  // Field numbers (e.g., = 1) are unique identifiers used in binary serialization.
+  // They must not change once your proto files are in use in production.
+
+  string patientId = 1; // Patient's unique ID as a string.
+  string name = 2;      // Patient's name.
+  string email = 3;     // Patient's email address.
+}
+
+// Defines the response message returned after creating a billing account.
+message BillingResponse {
+  string accountId = 1; // Unique ID for the newly created billing account.
+  string status = 2;    // Status message (e.g., "success" or "failed").
+}
