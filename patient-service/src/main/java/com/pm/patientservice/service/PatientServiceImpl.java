@@ -10,6 +10,8 @@ import com.pm.patientservice.mapper.PatientMapper;
 import com.pm.patientservice.model.Patient;
 import com.pm.patientservice.repository.PatientRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,6 +27,7 @@ public class PatientServiceImpl implements PatientService {
     private KafkaProducer kafkaProducer;
 
     @Override
+    @Cacheable(value = "patients")
     public List<PatientResponseDTO>getPatients (){
 
         List<Patient> patients = patientRepository.findAll();
@@ -35,6 +38,7 @@ public class PatientServiceImpl implements PatientService {
 
     }
     @Override
+    @CacheEvict(value = "patients", allEntries = true)
     public PatientResponseDTO createPatient(PatientRequestDTO patientRequestDTO){
 
         if(patientRepository.existsByEmail(patientRequestDTO.getEmail())){
@@ -53,6 +57,7 @@ public class PatientServiceImpl implements PatientService {
 
     }
     @Override
+    @CacheEvict(value = "patients", allEntries = true)
     public PatientResponseDTO updatePatient(UUID id, PatientRequestDTO patientRequestDTO){
 
     Patient patient = patientRepository.findById(id).orElseThrow(()-> new PatientNotFoundException("Patient not found with id :"+id));
@@ -72,6 +77,7 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
+    @CacheEvict(value = "patients", allEntries = true)
     public void deletePatient(UUID id){
 
         patientRepository.deleteById(id);
